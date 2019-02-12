@@ -2,11 +2,35 @@ var secondsPast = 0;
 var loggingEmotion = false;
 var loggedTime = 0;
 var deltaValence = 0, deltaTempo = 0, deltaEnergy = 0;
+var totals = { emotion: {
+			                "anger": 0,
+			                "disgust": 0,
+			                "happiness": 0,
+			                "neutral": 0,
+			                "sadness": 0,
+			                "surprise": 0 }
+			          	};
+var avgHappy, avgNeutral, avgSad, avgAngry, avgSurprise, avgDisgust;
 
 navigator.mediaDevices.getUserMedia = (navigator.mediaDevices.getUserMedia ||
 	navigator.mediaDevices.webkitGetUserMedia ||
 	navigator.mediaDevices.mozGetUserMedia ||
 	navigator.mediaDevices.msGetUserMedia);
+
+var posterData = {
+	data:[
+       [0.05, 0.05, 0.8, 0.0, 0.05, 0.05],
+       [0.1, 0.0, 0.7, 0.1, 0.05, 0.05],
+       [0.5, 0.0, 0.4, 0.05, 0.0, 0.05],
+       [0.9, 0.0, 0.05, 0.0, 0.0, 0.05],
+       [0.3, 0.4, 0.2, 0.05, 0.05, 0.0],
+       [0.1, 0.7, 0.05, 0.15, 0.0, 0.0],
+       [0.0, 0.9, 0.0, 0.1, 0.0, 0.0],
+       [0.2, 0.4, 0.2, 0.2, 0.0, 0.0],
+       [0.0, 0.2, 0.1, 0.5, 0.2, 0.0],
+       [0.0, 0.2, 0.1, 0.6, 0.09, 0.01]
+   ]
+};
 
 var config = {
 	type: 'line',
@@ -14,8 +38,8 @@ var config = {
 		datasets: [
 		{
 			label: 'Happiness',
-			backgroundColor: 'rgba(240, 255, 0, 1)',
-			borderColor: 'rgba(240, 255, 0, 1)',
+			backgroundColor: '#f2d202',
+			borderColor: '#f2d202',
 			fill: false,
 			data: []
 		},
@@ -77,13 +101,16 @@ var config = {
 			text: 'Emotional State Data',
 			fontColor: 'rgba(255,255,255,0.8)',
 			fontSize: 16
+			// fontSize: 24,
+
 		},
 		legend: {
 			position: 'bottom',
 			labels: {
 				fontColor: 'rgba(255,255,255,0.8)',
 				padding: 20,
-				boxWidth: 20
+				boxWidth: 20,
+				// fontSize: 24
 			}
 		},
 		scales: {
@@ -103,11 +130,13 @@ var config = {
 					labelString: 'Timepoint (s)',
 					fontColor: 'rgba(255,255,255,0.8)',
 					fontSize: 14
+					// fontSize: 24
 				}
 			}],
 			yAxes: [{
 				gridLines: {
 					color: 'rgba(255,255,255,0.5)'
+					// color: 'black'
 				},
 				display: true,
 				ticks: {
@@ -119,6 +148,7 @@ var config = {
 					labelString: 'Confidence Score',
 					fontColor: 'rgba(255,255,255,0.8)',
 					fontSize: 14
+					// fontSize: 24
 				}
 			}]
 		}
@@ -129,122 +159,168 @@ var config = {
 window.onload = function() {
 	var ctx = document.getElementById('emotionChart').getContext('2d');
 	window.myLine = new Chart(ctx, config);
+	Chart.defaults.global.defaultFontColor = 'black';
 };
 
 
 function screenshot() {
 	takeASnap()
-	// .then(imgData => {
-	// 	$.post({
-	// 		url: "https://canadacentral.api.cognitive.microsoft.com/face/v1.0/detect?&returnFaceAttributes=emotion",
-	// 		contentType: "application/octet-stream",
-	// 		headers: {
-	// 			'Ocp-Apim-Subscription-Key': '4c04468a743c4afb8784828df37ecf38'
-	// 		},
-	// 		processData: false,
-	// 		data: imgData
-	// 	}, function(data) {
-	// 		if (data.length > 0){
-	// 			emotions = data[0].faceAttributes.emotion;
-			
-	// 			// config.data.datasets.forEach(function(dataset) {
-	// 			// 	x: newDateString(config.data.datasets[0].data.length + 2),
-	// 			// 	y: randomScalingFactor()
-	// 			// });
-	// 			timestamp = newTime();
+	.then(imgData => {
+		$.post({
+			url: "https://canadacentral.api.cognitive.microsoft.com/face/v1.0/detect?&returnFaceAttributes=emotion",
+			contentType: "application/octet-stream",
+			headers: {
+				'Ocp-Apim-Subscription-Key': 'dc3d2874496f47b8a6c0ceb04351a8b2'
+			},
+			processData: false, 
+			data: imgData
+		}, function(data) {
+			if (data.length > 0){
+				emotions = data[0].faceAttributes.emotion;
+				
+				config.data.datasets[0].data.push({
+					x: timestamp,
+					y: parseFloat(emotions.happiness)
+				});
+				totals.emotion.happiness += emotions.happiness;
 
-	// 			config.data.datasets[0].data.push({
-	// 				x: timestamp,
-	// 				y: parseFloat(emotions.happiness) * 100
-	// 			});
-	// 			// config.data.datasets[1].data.push({
-	// 			// 	x: timestamp,
-	// 			// 	y: parseFloat(emotions.contempt) * 100
-	// 			// });
-	// 			config.data.datasets[1].data.push({
-	// 				x: timestamp,
-	// 				y: parseFloat(emotions.sadness) * 100
-	// 			});
-	// 			// config.data.datasets[3].data.push({
-	// 			// 	x: timestamp,
-	// 			// 	y: parseFloat(emotions.fear) * 100
-	// 			// });
-	// 			config.data.datasets[2].data.push({
-	// 				x: timestamp,
-	// 				y: parseFloat(emotions.neutral) * 100
-	// 			});
-	// 			config.data.datasets[3].data.push({
-	// 				x: timestamp,
-	// 				y: parseFloat(emotions.anger) * 100
-	// 			});
-	// 			config.data.datasets[4].data.push({
-	// 				x: timestamp,
-	// 				y: parseFloat(emotions.disgust) * 100
-	// 			});
-	// 			config.data.datasets[5].data.push({
-	// 				x: timestamp,
-	// 				y: parseFloat(emotions.surprise) * 100
-	// 			});
+				// config.data.datasets[1].data.push({
+				// 	x: timestamp,
+				// 	y: parseFloat(emotions.contempt) * 100
+				// });
 
-	// 			window.myLine.update();
-	// 		}
-	// });
+				config.data.datasets[1].data.push({
+					x: timestamp,
+					y: parseFloat(emotions.sadness)
+				});
+				totals.emotion.sadness += emotions.sadness;
 
-	// for testing
-	.then(() => {
-		// timestamp = newTime();	
-		config.data.datasets.forEach(function(dataset) {
-			if (secondsPast > 9){
-				dataset.data.shift();
+				// config.data.datasets[3].data.push({
+				// 	x: timestamp,
+				// 	y: parseFloat(emotions.fear) * 100
+				// });
+
+				config.data.datasets[2].data.push({
+					x: timestamp,
+					y: parseFloat(emotions.neutral)
+				});
+				totals.emotion.neutral += emotions.neutral;
+
+				config.data.datasets[3].data.push({
+					x: timestamp,
+					y: parseFloat(emotions.anger) 
+				});
+				totals.emotion.anger += emotions.anger;
+
+				config.data.datasets[4].data.push({
+					x: timestamp,
+					y: parseFloat(emotions.disgust)
+				});
+				totals.emotion.disgust += emotions.disgust;
+
+				config.data.datasets[5].data.push({
+					x: timestamp,
+					y: parseFloat(emotions.surprise)
+				});
+				totals.emotion.surprise += emotions.surprise;
+
+
+				if (config.data.datasets[0].data.length == 10 || secondsPast < 10){
+					window.myLine.update();
+				}
+
+				// update Spotify playlist
+				if (loggedTime > 9){
+					loggingEmotion = false;
+
+					console.log(totals);
+
+					updatePlaylist();
+				}
+				
+				// counters
+				secondsPast += 1;
+				if (loggingEmotion) {
+					loggedTime += 1;
+				} 
 			}
-
-			dataset.data.push({
-				x: secondsPast,
-				y: Math.random()
-			});
 		});
 
-		if (config.data.datasets[0].data.length == 10 || secondsPast < 10){
-			window.myLine.update();
-		}
-
-		// update Spotify playlist
-		if (loggedTime > 9){
-			loggingEmotion = false;
-			updatePlaylist();
-		}
+	// for testing
+	// .then(() => {
+	// 	// timestamp = newTime();	
 		
-		// counters
-		secondsPast += 1;
-		if (loggingEmotion) {
-			loggedTime += 1;
-			deltaValence += 0.01;
-			deltaTempo += 2;
-			deltaEnergy += 0.01;
-		} 
+	// 	// for poster screenshot
+	// 	var counter = 0;
+	// 	config.data.datasets.forEach(function(dataset) {
+	// 		dataset.data.push({
+	// 			x:secondsPast,
+	// 			y:posterData.data[secondsPast][counter]
+	// 		});
+
+	// 		counter += 1;
+	// 	});
+
+
+	// 	if (secondsPast < 10){
+	// 		window.myLine.update();
+	// 	}
+
+	// 	// config.data.datasets.forEach(function(dataset) {
+	// 	// 	if (secondsPast > 9){
+	// 	// 		dataset.data.shift();
+	// 	// 	}
+
+	// 	// 	dataset.data.push({
+	// 	// 		x: secondsPast,
+	// 	// 		y: Math.random()
+	// 	// 	});
+	// 	// });
+
+	// 	// if (config.data.datasets[0].data.length == 10 || secondsPast < 10){
+	// 	// 	window.myLine.update();
+	// 	// }
+
+	// 	// update Spotify playlist
+	// 	if (loggedTime > 9){
+	// 		loggingEmotion = false;
+	// 		updatePlaylist();
+	// 	}
+		
+	// 	// counters
+	// 	secondsPast += 1;
+	// 	if (loggingEmotion) {
+	// 		loggedTime += 1;
+	// 		deltaValence += 0.01;
+	// 		deltaTempo += 2;
+	// 		deltaEnergy += 0.01;
+	// 	} 
 	});
 }
 
 function logEmotion() {
 	updatePlaylist();
-	// loggingEmotion = true;
-	// deltaValence = 0;
-	// deltaTempo = 0;
-	// deltaEnergy = 0;
+	loggingEmotion = true;
 }
 
 function updatePlaylist() {
 	$.get({
 		url: 'http://localhost:8888/user/updatePlaylist?deltaValence=' + deltaValence
 				+ '&deltaTempo=' + deltaTempo + '&deltaEnergy=' + deltaEnergy
-	}, function(error, response, body) {
-		if (!error){
+	}, function(data, status) {
+		if (status == 'success'){
+			console.log("reloading page");
 			location.reload();
+		} else {
+			console.log(status);
+			console.log("error reloading page");
 		}
 		
 		deltaValence = 0;
 		deltaTempo = 0;
 		deltaEnergy = 0;
+
+		loggedEmotionTotals = [0,0,0,0,0,0,0,0];
 	});
 }
 
