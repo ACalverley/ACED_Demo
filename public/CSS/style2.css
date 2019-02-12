@@ -1,0 +1,13 @@
+.col-centred {
+	display:inline-block;
+	float:none;
+	text-align: center;"
+}
+
+.emoji-padded {
+	margin-bottom: -80px;
+}
+
+.chart-padded {
+	margin-top: -2.3em;
+}
