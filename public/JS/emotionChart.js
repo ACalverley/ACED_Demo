@@ -1,4 +1,4 @@
-var secondsPast = 0;
+var dataPoints = 0;
 var loggingEmotion = false;
 var loggedTime = 0;
 var deltaValence = 0, deltaTempo = 0, deltaEnergy = 0;
@@ -10,7 +10,6 @@ var totals = { emotion: {
 			                "sadness": 0,
 			                "surprise": 0 }
 			          	};
-var avgHappy, avgNeutral, avgSad, avgAngry, avgSurprise, avgDisgust;
 
 navigator.mediaDevices.getUserMedia = (navigator.mediaDevices.getUserMedia ||
 	navigator.mediaDevices.webkitGetUserMedia ||
@@ -159,7 +158,7 @@ var config = {
 window.onload = function() {
 	var ctx = document.getElementById('emotionChart').getContext('2d');
 	window.myLine = new Chart(ctx, config);
-	Chart.defaults.global.defaultFontColor = 'black';
+	// Chart.defaults.global.defaultFontColor = 'black';
 };
 
 
@@ -170,16 +169,25 @@ function screenshot() {
 			url: "https://canadacentral.api.cognitive.microsoft.com/face/v1.0/detect?&returnFaceAttributes=emotion",
 			contentType: "application/octet-stream",
 			headers: {
-				'Ocp-Apim-Subscription-Key': 'dc3d2874496f47b8a6c0ceb04351a8b2'
+				'Ocp-Apim-Subscription-Key': 'e91caa7877034a3bba07ca16af7003f9'
 			},
 			processData: false, 
 			data: imgData
-		}, function(data) {
+		}, function(data, status) {
+			// console.log(status);
 			if (data.length > 0){
 				emotions = data[0].faceAttributes.emotion;
 				
+				resizeEmoji(emotions);
+
+				if (dataPoints > 9) { 
+					config.data.datasets.forEach(function(dataset) {
+						dataset.data.shift();
+					});
+				}
+				
 				config.data.datasets[0].data.push({
-					x: timestamp,
+					x: dataPoints,
 					y: parseFloat(emotions.happiness)
 				});
 				totals.emotion.happiness += emotions.happiness;
@@ -190,7 +198,7 @@ function screenshot() {
 				// });
 
 				config.data.datasets[1].data.push({
-					x: timestamp,
+					x: dataPoints,
 					y: parseFloat(emotions.sadness)
 				});
 				totals.emotion.sadness += emotions.sadness;
@@ -201,45 +209,45 @@ function screenshot() {
 				// });
 
 				config.data.datasets[2].data.push({
-					x: timestamp,
+					x: dataPoints,
 					y: parseFloat(emotions.neutral)
 				});
 				totals.emotion.neutral += emotions.neutral;
 
 				config.data.datasets[3].data.push({
-					x: timestamp,
+					x: dataPoints,
 					y: parseFloat(emotions.anger) 
 				});
 				totals.emotion.anger += emotions.anger;
 
 				config.data.datasets[4].data.push({
-					x: timestamp,
+					x: dataPoints,
 					y: parseFloat(emotions.disgust)
 				});
 				totals.emotion.disgust += emotions.disgust;
 
 				config.data.datasets[5].data.push({
-					x: timestamp,
+					x: dataPoints,
 					y: parseFloat(emotions.surprise)
 				});
 				totals.emotion.surprise += emotions.surprise;
 
 
-				if (config.data.datasets[0].data.length == 10 || secondsPast < 10){
+				if (config.data.datasets[0].data.length == 10 || dataPoints < 10){
 					window.myLine.update();
 				}
 
 				// update Spotify playlist
 				if (loggedTime > 9){
 					loggingEmotion = false;
-
+					loggedTime = 0;
 					console.log(totals);
 
-					updatePlaylist();
+					updatePlaylist(totals);
 				}
 				
 				// counters
-				secondsPast += 1;
+				dataPoints += 1;
 				if (loggingEmotion) {
 					loggedTime += 1;
 				} 
@@ -299,11 +307,23 @@ function screenshot() {
 }
 
 function logEmotion() {
-	updatePlaylist();
+	// updatePlaylist();
 	loggingEmotion = true;
 }
 
-function updatePlaylist() {
+function updatePlaylist(totals) {
+	
+	var avgHappy = totals.emotion.happiness/10;
+	var avgNeutral = totals.emotion.neutral/10;
+	var avgSad = totals.emotion.sadness/10;
+	var avgAngry = totals.emotion.anger/10;
+	var avgSurprise = totals.emotion.surprise/10;
+	var avgDisgust = totals.emotion.disgust/10;
+	
+	deltaValence = (avgHappy - avgSad);
+	deltaEnergy = (avgHappy + avgSurprise - avgDisgust);
+	deltaTempo = (avgSurprise - avgAngry - avgDisgust);
+
 	$.get({
 		url: 'http://localhost:8888/user/updatePlaylist?deltaValence=' + deltaValence
 				+ '&deltaTempo=' + deltaTempo + '&deltaEnergy=' + deltaEnergy
@@ -347,7 +367,7 @@ function startWebcam() {
         	vid.srcObject = localMediaStream;
         	return vid.play();
         })
-        .finally(window.setInterval(screenshot, 1000));
+        .finally(window.setInterval(screenshot, 2000));
 
     } else {
     	console.log("getUserMedia not supported");

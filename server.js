@@ -30,7 +30,7 @@ app.get('/home', (req, res) => {
 });
 
 app.get('*', (req, res) => {
-	res.send({message: "hey bitch"});
+	res.send({message: "no path found!"});
 });
 
 app.set("view engine", "ejs");

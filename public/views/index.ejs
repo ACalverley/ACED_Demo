@@ -7,42 +7,42 @@
 	<!-- Stylesheets -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<link href="CSS/style.css" rel="stylesheet">
-	<link href="CSS/style2.css" rel="stylesheet">
+	<!-- <link href="CSS/style2.css" rel="stylesheet"> -->
 </head>
 
 <body style="overflow: hidden">
 	<div class="container">
+		<h1 class="title centered">ACED Solutions</h1>
+		<h5 class="title centered">Feel the music.</h5>
 		<div class="row">
 			<div class="col" id="media-player">
-				<iframe src="https://open.spotify.com/embed/user/<%= user_id %>/playlist/<%= playlist_id %>" width="300" height="350" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+				<iframe src="https://open.spotify.com/embed/user/<%= user_id %>/playlist/<%= playlist_id %>" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
 			</div>
 			<div class="col col-centred">
-				<h1 class="aced-colour">ACED Solutions</h1>
-				<h5 class="aced-colour">Feel the music.</h5>
 				<button class="btn btn-success" onclick="startWebcam();">Begin Demo</button>
 				<button class="btn btn-success" onclick="logEmotion();">Log Emotions</button>
-				<video class="video-padded" width="310em" height="300em" id='vid'></video>
+				<video class="video-padded" width="400em" height="300em" id='vid'></video>
 			</div>
-			<div class="col" style="padding-top: 3.5em;">
+			<div class="col">
 				<div class="row">
-					<div class="col col-centred">
-						<h1 id="angerEmoji">😡</h1>
-					</div>
-					<div class="col col-centred">
-						<h1 id="disgustEmoji">🤢</h1>
-					</div>
-				</div>
-				<div class="row emoji-padded">
 					<div class="col col-centred">
 						<h1 id="happyEmoji">😃</h1>
 					</div>
 					<div class="col col-centred">
-						<h1 id="neutralEmoji">😐</h1>
-					</div>					
+						<h1 id="sadEmoji">😥</h1>
+					</div>
 				</div>
 				<div class="row emoji-padded">
 					<div class="col col-centred">
-						<h1 id="sadEmoji">😥</h1>
+						<h1 id="neutralEmoji">😐</h1>
+					</div>
+					<div class="col col-centred">
+						<h1 id="angerEmoji">😡</h1>
+					</div>			
+				</div>
+				<div class="row emoji-padded">
+					<div class="col col-centred">
+						<h1 id="disgustEmoji">🤢</h1>
 					</div>
 					<div class="col col-centred">
 						<h1 id="surprisedEmoji">😦</h1>
@@ -51,15 +51,15 @@
 			</div>
 		</div>
 		<div class="row chart-padded" id="chart">
-			<canvas width="300" height="68" id="emotionChart"></canvas>
+			<canvas width="300" height="70" id="emotionChart"></canvas>
 		</div>
 	</div>
 </body>
 
 <!-- Add Scripts -->
 <script src="JS/jquery-3.3.1.js"></script>
-<script src="JS/emotionChart.js"></script>
 <script src="JS/emojiAnimate.js"></script>
+<script src="JS/emotionChart.js"></script>
 <!-- Link external Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
 <script src="JS/emotionChart.js"></script>

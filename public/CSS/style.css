@@ -1,8 +1,14 @@
-body {
-	background: linear-gradient(to left, #7b4397, #ff667f);
+.container {
+	min-height: 100%;
 }
 
 .row {
+	padding-top: 25px;
+	min-height: 50%;
+	display: flex;
+}
+
+#bottomRow {
 	height: 50%;
 }
 
@@ -20,7 +26,36 @@ body {
 	text-align: center;
 }
 
-.aced-colour {
+.title {
 	color: rgba(255,255,255,0.8);
 }
 
+.col-centred {
+	display:inline-block;
+	float:none;
+	text-align: center;
+}
+
+.emoji-padded {
+	margin-top: -80px;
+}
+
+.chart-padded {
+	/*margin-top: -2.3em;*/
+}
+
+.video-padded {
+	margin-top: 35px;
+}
+
+html, body {
+	height: 100%;
+}
+
+body {
+	background: linear-gradient(to left, #7b4397, #ff667f);
+}
+
+h1 {
+	padding-top: 30px;
+}

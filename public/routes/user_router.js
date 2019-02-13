@@ -21,14 +21,13 @@ router.use(function timeLog(req, res, next) {
 //////////////////////////////////// ROUTES //////////////////////////////////////////////////////
 
 router.get('/updatePlaylist', async (req, res) => {
-    // valence = valence + req.query.deltaValence;
-    // tempo = tempo + req.query.deltaTempo;
-    // energy = energy + req.query.deltaEnergy;
-    valence = 0.9;
-    tempo = 140;
-    energy = 0.8;
+    valence = valence + req.query.deltaValence;
+    tempo = tempo + req.query.deltaTempo;
+    energy = energy + req.query.deltaEnergy;
 
-    console.log("updating valence: " + req.query.deltaValence);
+    console.log("delta valence: " + req.query.deltaValence);
+    console.log("delta tempo: " + req.query.deltaTempo);
+    console.log("delta energy: " + req.query.deltaEnergy);
 
     var getRecommendation = {
         url: 'https://api.spotify.com/v1/recommendations',
