@@ -25,7 +25,7 @@ app.use('/user', require('./public/routes/user_router.js'));
 app.use('/login', require('./public/routes/login_router.js'));
 
 app.get('/home', (req, res) => {
-	console.log(req.query);
+	// console.log(req.query);
 	res.render('index.ejs', {playlist_id: req.query.playlist_id, user_id: req.query.user_id});
 });
 

@@ -1,6 +1,8 @@
 var dataPoints = 0;
 var loggingEmotion = false;
 var loggedTime = 0;
+var flag = 0;
+var apiKey = ['7453875244d44303b8f460f4597d8f29', 'e91caa7877034a3bba07ca16af7003f9'];
 var deltaValence = 0, deltaTempo = 0, deltaEnergy = 0;
 var totals = { emotion: {
 			                "anger": 0,
@@ -169,12 +171,16 @@ function screenshot() {
 			url: "https://canadacentral.api.cognitive.microsoft.com/face/v1.0/detect?&returnFaceAttributes=emotion",
 			contentType: "application/octet-stream",
 			headers: {
-				'Ocp-Apim-Subscription-Key': 'e91caa7877034a3bba07ca16af7003f9'
+				'Ocp-Apim-Subscription-Key': apiKey[flag]
 			},
 			processData: false, 
 			data: imgData
 		}, function(data, status) {
 			// console.log(status);
+			if (flag == 0){
+				flag = 1;
+			} else flag = 0;
+
 			if (data.length > 0){
 				emotions = data[0].faceAttributes.emotion;
 				
@@ -238,7 +244,7 @@ function screenshot() {
 				}
 
 				// update Spotify playlist
-				if (loggedTime > 9){
+				if (loggedTime > 4){
 					loggingEmotion = false;
 					loggedTime = 0;
 					console.log(totals);
@@ -313,18 +319,19 @@ function logEmotion() {
 
 function updatePlaylist(totals) {
 	
-	var avgHappy = totals.emotion.happiness/10;
-	var avgNeutral = totals.emotion.neutral/10;
-	var avgSad = totals.emotion.sadness/10;
-	var avgAngry = totals.emotion.anger/10;
-	var avgSurprise = totals.emotion.surprise/10;
-	var avgDisgust = totals.emotion.disgust/10;
+	var avgHappy = totals.emotion.happiness/5;
+	var avgNeutral = totals.emotion.neutral/5;
+	var avgSad = totals.emotion.sadness/5;
+	var avgAngry = totals.emotion.anger/5;
+	var avgSurprise = totals.emotion.surprise/5;
+	var avgDisgust = totals.emotion.disgust/5;
 	
-	deltaValence = (avgHappy - avgSad);
-	deltaEnergy = (avgHappy + avgSurprise - avgDisgust);
-	deltaTempo = (avgSurprise - avgAngry - avgDisgust);
+	deltaValence = (avgHappy - avgSad - avgAngry).toFixed(2);
+	deltaEnergy = (avgHappy + avgSurprise - avgDisgust - avgSad).toFixed(2);
+	deltaTempo = ((avgHappy + avgSurprise + avgAngry - avgSad) * 75).toFixed(2);
 
 	$.get({
+		// http://localhost:8888/user/updatePlaylist?deltaValence=0.2&deltaTempo=20&deltaEnergy=0.3
 		url: 'http://localhost:8888/user/updatePlaylist?deltaValence=' + deltaValence
 				+ '&deltaTempo=' + deltaTempo + '&deltaEnergy=' + deltaEnergy
 	}, function(data, status) {
@@ -367,7 +374,7 @@ function startWebcam() {
         	vid.srcObject = localMediaStream;
         	return vid.play();
         })
-        .finally(window.setInterval(screenshot, 2000));
+        .finally(window.setInterval(screenshot, 2510));
 
     } else {
     	console.log("getUserMedia not supported");

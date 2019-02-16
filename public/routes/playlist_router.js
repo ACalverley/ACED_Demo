@@ -21,7 +21,7 @@ router.use(function timeLog(req, res, next) {
 router.get('/update', (req, res) => {
     trackURIs = req.query.tracks;
 
-    console.log("inside update playlist route");
+    // console.log("inside update playlist route");
     var updatePlaylist = {
         url: 'https://api.spotify.com/v1/playlists/' + playlistID + '/tracks',
         headers: {
@@ -37,7 +37,7 @@ router.get('/update', (req, res) => {
     rp.put(updatePlaylist, (err, response, body) => {
         if (err) console.log(err);
         else {
-            console.log("Redirecting back to home page");
+            // console.log("Redirecting back to home page");
 
             res.redirect("/home?" + 
                 querystring.stringify({
@@ -53,7 +53,7 @@ router.get('/create', (req, res) => {
     trackURIs = req.query.tracks;
     userID = req.query.user_id;
 
-    console.log("inside create playlist route");
+    // console.log("inside create playlist route");
     var createPlaylist = {
         url: 'https://api.spotify.com/v1/users/' + req.query.user_id + '/playlists',
         headers: {
@@ -90,7 +90,7 @@ router.get('/create', (req, res) => {
             request.post(addSong, (err, addSongRes) => {
                 if (err) console.log(err);
                 else {
-                    console.log("Redirecting back to home page");
+                    // console.log("Redirecting back to home page");
 
                     res.redirect("/home?" + 
                         querystring.stringify({

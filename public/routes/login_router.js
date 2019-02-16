@@ -21,7 +21,7 @@ const redirect_uri = "http://localhost:8888/login/callback"; // Your redirect ur
 var stateKey = 'spotify_auth_state';
 
 router.use(function timeLog(req, res, next) {
-    console.log('Time: ', Date.now());
+    // console.log('Time: ', Date.now());
     next();
 });
 
@@ -88,7 +88,7 @@ router.get('/callback', function(req, res) {
                 // use the access token to access the Spotify Web API
                 request.get(options, function(error, response, body) {
                     var user_id = body.id;
-                    console.log("user body is: " + body);
+                    // console.log("user body is: " + body);
 
                     res.redirect('/user/createPlaylist?' +
                         querystring.stringify({
