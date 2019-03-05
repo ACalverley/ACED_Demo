@@ -184,7 +184,7 @@ function screenshot() {
 			if (data.length > 0){
 				emotions = data[0].faceAttributes.emotion;
 				
-				resizeEmoji(emotions);
+				// resizeEmoji(emotions);
 
 				if (dataPoints > 9) { 
 					config.data.datasets.forEach(function(dataset) {
@@ -243,12 +243,12 @@ function screenshot() {
 					window.myLine.update();
 				}
 
-				// update Spotify playlist
-				if (loggedTime > 4){
+				// update Spotify playlist every 15 minutes
+				if (loggedTime > 359){
 					loggingEmotion = false;
 					loggedTime = 0;
 					console.log(totals);
-
+					
 					updatePlaylist(totals);
 				}
 				
@@ -331,7 +331,6 @@ function updatePlaylist(totals) {
 	deltaTempo = ((avgHappy + avgSurprise + avgAngry - avgSad) * 75).toFixed(2);
 
 	$.get({
-		// http://localhost:8888/user/updatePlaylist?deltaValence=0.2&deltaTempo=20&deltaEnergy=0.3
 		url: 'http://localhost:8888/user/updatePlaylist?deltaValence=' + deltaValence
 				+ '&deltaTempo=' + deltaTempo + '&deltaEnergy=' + deltaEnergy
 	}, function(data, status) {
@@ -374,7 +373,7 @@ function startWebcam() {
         	vid.srcObject = localMediaStream;
         	return vid.play();
         })
-        .finally(window.setInterval(screenshot, 2510));
+        .finally(window.setInterval(screenshot, 2505));
 
     } else {
     	console.log("getUserMedia not supported");
