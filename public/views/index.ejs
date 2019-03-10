@@ -10,68 +10,77 @@
 	<!-- <link href="CSS/style2.css" rel="stylesheet"> -->
 </head>
 
-<body style="overflow: hidden">
+<body style="overflow: scroll;">
 	<div class="container">
 		<h1 class="title centered">ACED Solutions</h1>
 		<h5 class="title centered">Feel the music.</h5>
 		<div class="row">
 			<div class="col" id="media-player">
-				<iframe src="https://open.spotify.com/embed/user/<%= user_id %>/playlist/<%= playlist_id %>" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+				<iframe id="spotifyPlayer" src="https://open.spotify.com/embed/user/<%= user_id %>/playlist/<%= playlist_id %>" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
 			</div>
 			<div class="col col-centred">
 				<button class="btn btn-success" onclick="startWebcam();">Begin Demo</button>
-				<button class="btn btn-success" onclick="logEmotion();">Log Emotions</button>
+				<!-- <button class="btn btn-success" onclick="logEmotion();">Log Emotions</button> -->
 				<video class="video-padded" width="400em" height="300em" id='vid'></video>
 			</div>
 			<div class="col">
-				<p class="title">Please select how strongly you feel each emotion when the music stops (at a minimum). You may also submit values more frequently than this. <b>Please try to make the sum of values 10.</b></p>
-				<form action="/action_page.php">
-					<p class="title">Happiness</p>
-				  	<input list="happiness" name="happy">
-					  	<datalist id="happiness">
-						    <option value="1">
-						    <option value="2">
-						    <option value="3">
-						    <option value="4">
-						    <option value="5">
-						    <option value="6">
-						    <option value="7">
-						    <option value="8">
-						    <option value="9">
-						    <option value="10">
+				<p id="instructions">Click play in the Spotify player on the lefthand side, then click "Begin Demo" button.<p>
+				<p id="instructions">Ensure your face is visible by the webcam.<p>
+				<p id="instructions">When the music stops, please select how strongly you felt each emotion. <b>Please make the sum of values 10.</b></p>
+				<p id="instructions">Submit your results and then repeat with the updated playlist!</p>
+				<div class='userInput'>
+					<p id="emotionTag">Happiness</p>
+					<input list="happiness" id="happy">
+				  	<datalist id="happiness">
+					    <option data-value="1" value="1">
+					    <option data-value="2" value="2">
+					    <option data-value="3" value="3">
+					    <option data-value="4" value="4">
+					    <option data-value="5" value="5">
+					    <option data-value="6" value="6">
+					    <option data-value="7" value="7">
+					    <option data-value="8" value="8">
+					    <option data-value="9" value="9">
+					    <option data-value="10" value="10">
+				  	</datalist>
+			  		<br>
+				</div>
+			 
+			 	<div class='userInput'>
+			 		<p id="emotionTag">Neutrality</p>
+				  	<input list="neutrality" id="neutral">
+					  	<datalist id="neutrality">
+						    <option data-value="1" value="1">
+						    <option data-value="2" value="2">
+						    <option data-value="3" value="3">
+						    <option data-value="4" value="4">
+						    <option data-value="5" value="5">
+						    <option data-value="6" value="6">
+						    <option data-value="7" value="7">
+						    <option data-value="8" value="8">
+						    <option data-value="9" value="9">
+						    <option data-value="10" value="10">
 					  	</datalist>
 				  	<br>
-				  	<p class="title">Neutrality</p>
-				  	<input list="happiness" name="happy">
-					  	<datalist id="happiness">
-						    <option value="1">
-						    <option value="2">
-						    <option value="3">
-						    <option value="4">
-						    <option value="5">
-						    <option value="6">
-						    <option value="7">
-						    <option value="8">
-						    <option value="9">
-						    <option value="10">
-					  	</datalist>
-				  	<br>
-				  	<p class="title">Sadness</p>
-				  	<input list="happiness" name="happy">
-					  	<datalist id="happiness">
-						    <option value="1">
-						    <option value="2">
-						    <option value="3">
-						    <option value="4">
-						    <option value="5">
-						    <option value="6">
-						    <option value="7">
-						    <option value="8">
-						    <option value="9">
-						    <option value="10">
-					  	</datalist>
-				  	<input type="submit">
-				</form>		
+			 	</div>
+			  	
+			  	<div class='userInput'>
+			  		<p id="emotionTag">Sadness</p>
+			  		<input list="sadness" id="sad">
+				  	<datalist id="sadness">
+					    <option data-value="1" value="1">
+					    <option data-value="2" value="2">
+					    <option data-value="3" value="3">
+					    <option data-value="4" value="4">
+					    <option data-value="5" value="5">
+					    <option data-value="6" value="6">
+					    <option data-value="7" value="7">
+					    <option data-value="8" value="8">
+					    <option data-value="9" value="9">
+					    <option data-value="10" value="10">
+				  	</datalist>
+			  	</div>
+			  	<button class="btn btn-success" onclick="logUserResponse();">Submit</button>
 			</div>
 		</div>
 		<div class="row chart-padded" id="chart">

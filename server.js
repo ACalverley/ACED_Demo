@@ -29,8 +29,8 @@ app.get('/home', (req, res) => {
 	res.render('index.ejs', {playlist_id: req.query.playlist_id, user_id: req.query.user_id});
 });
 
-app.get('*', (req, res) => {
-	res.send({message: "no path found!"});
+app.get('/', (req, res) => {
+	res.redirect('/login');
 });
 
 app.set("view engine", "ejs");

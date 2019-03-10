@@ -6,6 +6,7 @@
 require('dotenv').config();
 const express = require('express'),
     router = express.Router();
+    request = require('request'),
     rp = require('request-promise'); // "Request" library
     cors = require('cors');
     querystring = require('querystring');
@@ -16,6 +17,22 @@ var playlistID, userID;
 router.use(function timeLog(req, res, next) {
     //   console.log('Time: ', Date.now());
     next();
+});
+
+router.get('/play', (req, res) => {
+    var playPlaylist = {
+        url: 'https://api.spotify.com/v1/me/player/play',
+        headers: {
+            'Authorization': 'Bearer ' + req.query.access_token,
+            'Content-Type': 'application/json'
+        },
+        body : {
+            'context_uri': 'spotify:playlist:' + playlistID
+        },
+        json: true
+    };
+
+    rp.put(playPlaylist);
 });
 
 router.get('/update', (req, res) => {
@@ -35,7 +52,7 @@ router.get('/update', (req, res) => {
     };
 
     rp.put(updatePlaylist, (err, response, body) => {
-        if (err) console.log(err);
+        if (response.statusCode != 201) console.log(response.statusCode);
         else {
             // console.log("Redirecting back to home page");
 
@@ -68,9 +85,10 @@ router.get('/create', (req, res) => {
         json: true,
     };
 
-    request.post(createPlaylist, (err, response, body) => {
-        if (err) console.log(err);
+    rp.post(createPlaylist, (err, response, body) => {
+        if (response.statusCode != 201) console.log(response.statusCode);
         else {
+            console.log("successfully created a playlist");
             playlistID = body.id;
             // console.log(trackURIs);
 
@@ -87,7 +105,7 @@ router.get('/create', (req, res) => {
                 json: true,
             };
 
-            request.post(addSong, (err, addSongRes) => {
+            rp.post(addSong, (err, addSongRes) => {
                 if (err) console.log(err);
                 else {
                     // console.log("Redirecting back to home page");

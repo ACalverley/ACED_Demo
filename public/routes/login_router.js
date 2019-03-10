@@ -27,6 +27,7 @@ router.use(function timeLog(req, res, next) {
 
 // called when /login endpoint is hit
 router.get('/', (req, res) => {
+    console.log('login enpoint hit');
     var state = generateRandomString(16);
     res.cookie(stateKey, state);
 
@@ -43,7 +44,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/callback', function(req, res) {
-
+    console.log('callback hit');
     // your application requests refresh and access tokens
     // after checking the state parameter
     var code = req.query.code || null;
@@ -88,7 +89,7 @@ router.get('/callback', function(req, res) {
                 // use the access token to access the Spotify Web API
                 request.get(options, function(error, response, body) {
                     var user_id = body.id;
-                    // console.log("user body is: " + body);
+                    // console.log("redirecting to createPlaylist route");
 
                     res.redirect('/user/createPlaylist?' +
                         querystring.stringify({

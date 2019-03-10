@@ -1,25 +1,39 @@
-.container {
-	min-height: 100%;
-}
-
-.row {
-	padding-top: 25px;
-	min-height: 50%;
-	display: flex;
-}
-
 #bottomRow {
 	height: 50%;
 }
 
+#chart {
+	visibility: hidden;
+}
+
 #title {
 	text-align: center;
-	padding-top: 2em;
+	padding-bottom: 1em;
+}
+
+#instructions {
+	color: rgba(255,255,255,0.8);
+	margin-bottom: 8px;
 }
 
 #media-player {
 	padding-top: 1.5em;
 	text-align: center;
+}
+
+#emotionTag {
+	margin-bottom: 8px;
+	color: rgba(255,255,255,0.8);
+}
+
+.container {
+	min-height: 100%;
+}
+
+.row {
+	padding-top: 15px;
+	min-height: 50%;
+	display: flex;
 }
 
 .centered {
@@ -40,10 +54,6 @@
 	margin-top: -80px;
 }
 
-.chart-padded {
-	/*margin-top: -2.3em;*/
-}
-
 .video-padded {
 	margin-top: 35px;
 }
@@ -58,4 +68,12 @@ body {
 
 h1 {
 	padding-top: 30px;
+}
+
+br {
+	padding-bottom: 20px;
+}
+
+div .userInput {
+	padding-bottom: 16px;
 }
