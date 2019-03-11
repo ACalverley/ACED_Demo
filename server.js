@@ -58,7 +58,7 @@ app.set("view engine", "enginejs");
 app.set("views", __dirname + "/public/views");
 
 console.log('Listening on 8888');
-app.listen(8888, ipAddress);
+app.listen(8888);
 
 
 
