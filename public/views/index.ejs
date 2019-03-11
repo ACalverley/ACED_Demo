@@ -10,16 +10,18 @@
 	<!-- <link href="CSS/style2.css" rel="stylesheet"> -->
 </head>
 
-<body style="overflow: scroll;">
+<body onunload="endDemo()" style="overflow: scroll;">
 	<div class="container">
 		<h1 class="title centered">ACED Solutions</h1>
 		<h5 class="title centered">Feel the music.</h5>
 		<div class="row">
 			<div class="col" id="media-player">
 				<iframe id="spotifyPlayer" src="https://open.spotify.com/embed/user/<%= user_id %>/playlist/<%= playlist_id %>" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+				<button class="btn btn-primary" style="margin-top: 60px; margin-bottom: 6px;" onclick="endDemo();">End Demo</button>
+				<p id="thankyou" class="title">Thank you for your participation!</p>
 			</div>
 			<div class="col col-centred">
-				<button class="btn btn-success" onclick="startWebcam();">Begin Demo</button>
+				<button id="beginDemo" class="btn btn-success" onclick="startWebcam();">Begin Demo</button>
 				<!-- <button class="btn btn-success" onclick="logEmotion();">Log Emotions</button> -->
 				<video class="video-padded" width="400em" height="300em" id='vid'></video>
 			</div>
@@ -27,7 +29,7 @@
 				<p id="instructions">Click play in the Spotify player on the lefthand side, then click "Begin Demo" button.<p>
 				<p id="instructions">Ensure your face is visible by the webcam.<p>
 				<p id="instructions">When the music stops, please select how strongly you felt each emotion. <b>Please make the sum of values 10.</b></p>
-				<p id="instructions">Submit your results and then repeat with the updated playlist!</p>
+				<p id="instructions">Submit your results and then repeat instructions with the updated playlist!</p>
 				<div class='userInput'>
 					<p id="emotionTag">Happiness</p>
 					<input list="happiness" id="happy">
@@ -80,7 +82,8 @@
 					    <option data-value="10" value="10">
 				  	</datalist>
 			  	</div>
-			  	<button class="btn btn-success" onclick="logUserResponse();">Submit</button>
+			  	<button id="submitResponse" class="btn btn-success" style="margin-bottom: 6px;" onclick="logUserResponse();">Submit</button>
+			  	<p id="confirmSubmit" class="title" style="visibility: hidden">Successful Submit - please start the new playlist and click "Begin Demo"</p>
 			</div>
 		</div>
 		<div class="row chart-padded" id="chart">

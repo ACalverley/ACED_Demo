@@ -5,11 +5,10 @@
  */
 require('dotenv').config();
 const express = require('express'),
-    router = express.Router();
-    request = require('request'),
-    rp = require('request-promise'); // "Request" library
-    cors = require('cors');
-    querystring = require('querystring');
+    router = express.Router(),
+    rp = require('request-promise'), // "Request" library
+    cors = require('cors'),
+    querystring = require('querystring'),
     cookieParser = require('cookie-parser');
 
 var playlistID, userID;

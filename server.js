@@ -6,7 +6,7 @@ const express = require('express'); // Express web server framework
 		queryString = require('query-string');
 		request = require('request-promise'); // "Request" library
 		base64Img = require('base64-img');
-        fs = require('fs');
+		fs = require('fs');
 
 var app = express();
 
@@ -27,6 +27,26 @@ app.use('/login', require('./public/routes/login_router.js'));
 app.get('/home', (req, res) => {
 	// console.log(req.query);
 	res.render('index.ejs', {playlist_id: req.query.playlist_id, user_id: req.query.user_id});
+});
+
+app.get("/data", (req, res) => {
+	dirname = './data';
+	allData = [];
+	fs.readdir(dirname, function(err, filenames) {
+	    if (err) {
+	    	res.send(err);
+	    }
+	    filenames.forEach(function(filename) {
+	    	// console.log(filename);
+	      	content = fs.readFileSync(dirname + "/" + filename);
+	        // console.log(content.toString());
+	        userData = JSON.parse(content.toString());
+	        allData.push(userData);
+	    });
+
+	    console.log("finished reading files");
+	    res.send(allData);
+  	});
 });
 
 app.get('/', (req, res) => {

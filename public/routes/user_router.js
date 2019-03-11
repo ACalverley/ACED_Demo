@@ -1,6 +1,7 @@
 // jshint ignore: start
 require('dotenv').config();
 const express = require('express');
+    fs = require('fs');
     router = express.Router();
     rp = require('request-promise'); // "Request" library
     cors = require('cors');
@@ -10,9 +11,15 @@ const express = require('express');
 const client_id = process.env.CLIENT_ID; // Your client id 
 const client_secret = process.env.CLIENT_SECRET; // Your secret
 
+var ABTest = 1;
+var trialNumber = 2;
+
+var sessionData = {};
+var userData = [];
+
 var valence = 0.4;
 var tempo = 90;
-var energy = 0.4;
+var energy = 0.6;
 var access_token, refresh_token, user_id;
 var topTracks = [], topArtists = [];
 
@@ -22,14 +29,53 @@ router.use(function timeLog(req, res, next) {
 });
 
 //////////////////////////////////// ROUTES //////////////////////////////////////////////////////
+router.get('/endDemo', (req, res) => {
+    console.log("demo ended");
+    
+    fs.writeFile("./data/UserTrial" + trialNumber + ".txt", JSON.stringify(userData), (err, data) => {
+        if (err) console.log(err)
+        else {
+            console.log("wrote user trial #" + trialNumber + " to database");
+            trialNumber += 1;
+        }
+    })
+
+});
+
+router.post('/logUserResponse', (req, res) => {
+    console.log("logging user response");
+    userData[userData.length - 1].userResponse = req.body.userResponse;
+    userData[userData.length - 1].valence = valence;
+
+    res.end();
+});
+
 router.post('/updateParameters', (req, res) => {
-    console.log(req.body);
+    console.log("updating parameters and logging emotions");
+
+    sessionData = {};
+    
+    sessionData.totals = req.body.totals;
+    sessionData.emotionLog = req.body.emotionLog;
+
+    userData.push(sessionData);
+
+    console.log(sessionData);
+
+    // var avgHappy = totals.emotion.happiness/5;
+    // var avgNeutral = totals.emotion.neutral/5;
+    // var avgSad = totals.emotion.sadness/5;
+    // var avgAngry = totals.emotion.anger/5;
+    // var avgSurprise = totals.emotion.surprise/5;
+    // var avgDisgust = totals.emotion.disgust/5;
+
     res.redirect('updatePlaylist');
+    // res.end();
 });
 
 router.get('/updatePlaylist', async (req, res) => {
     console.log("updating playlist");
-    valence += 0.5;
+    valence += 0.1;
     // totals = body.totals;
     // user = body.user;
     // dataPoints = body.dataPoints;
@@ -76,7 +122,7 @@ router.get('/updatePlaylist', async (req, res) => {
                   'Authorization': 'Bearer ' + access_token
                 },
                 qs: {
-                    limit: 10,
+                    limit: 25,
                     seed_artists: topArtists.toString(),
                     seed_tracks: topTracks.toString(),
                     target_valence: valence,
@@ -95,7 +141,7 @@ router.get('/updatePlaylist', async (req, res) => {
 
                     for (var i = 0; i < response.body.tracks.length; i++) {
                         recommendedTracks.push(response.body.tracks[i].uri);
-                        console.log(response.body.tracks[i].name);
+                        // console.log(response.body.tracks[i].name);
                     }
                 }
                 else {
@@ -170,7 +216,7 @@ router.get('/createPlaylist', async (req, res) => {
                   'Authorization': 'Bearer ' + access_token
                 },
                 qs: {
-                    limit: 10,
+                    limit: 25,
                     seed_artists: topArtists.toString(),
                     seed_tracks: topTracks.toString(),
                     target_valence: valence,

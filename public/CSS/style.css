@@ -26,6 +26,11 @@
 	color: rgba(255,255,255,0.8);
 }
 
+#thankyou {
+	padding-left: 10px;
+	visibility: hidden;
+}
+
 .container {
 	min-height: 100%;
 }
