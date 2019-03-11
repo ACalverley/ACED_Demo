@@ -8,6 +8,7 @@ const express = require('express'); // Express web server framework
 		base64Img = require('base64-img');
 		fs = require('fs');
 
+var ipAddress = "192.168.2.28";
 var app = express();
 
 app.use(express.static(__dirname, { dotfiles: 'allow' } ));
@@ -53,11 +54,11 @@ app.get('/', (req, res) => {
 	res.redirect('/login');
 });
 
-app.set("view engine", "ejs");
+app.set("view engine", "enginejs");
 app.set("views", __dirname + "/public/views");
 
 console.log('Listening on 8888');
-app.listen(8888);
+app.listen(8888, ipAddress);
 
 
 
