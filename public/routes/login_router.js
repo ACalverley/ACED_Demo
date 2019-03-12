@@ -9,15 +9,16 @@
 
 require('dotenv').config();
 const express = require('express'),
-    router = express.Router();
-    request = require('request-promise'); // "Request" library
-    cors = require('cors');
-    querystring = require('querystring');
+    router = express.Router(),
+    request = require('request-promise'), // "Request" library
+    // cors = require('cors'),
+    querystring = require('querystring'),
     cookieParser = require('cookie-parser');
 
+const ipAddress = "192.168.2.28:8888";
 const client_id = process.env.CLIENT_ID; // Your client id 
 const client_secret = process.env.CLIENT_SECRET; // Your secret
-const redirect_uri = "http://localhost:8888/login/callback"; // Your redirect uri
+const redirect_uri = "https://aced-demo.now.sh/login/callback"; // Your redirect uri
 var stateKey = 'spotify_auth_state';
 
 router.use(function timeLog(req, res, next) {
@@ -52,7 +53,13 @@ router.get('/callback', function(req, res) {
     var storedState = req.cookies ? req.cookies[stateKey] : null;
 
     if (state === null || state !== storedState) {
-        res.redirect('/#' +
+    // if (state == null) {
+        console.log("error with state");
+        // res.redirect('/#' +
+        //     querystring.stringify({
+        //         error: 'state_mismatch'
+        //     }));
+        res.redirect('/home?' +
             querystring.stringify({
                 error: 'state_mismatch'
             }));
@@ -75,8 +82,10 @@ router.get('/callback', function(req, res) {
         request.post(authOptions, function(error, response, body) {
             if (!error && response.statusCode === 200) {
 
-                var access_token = body.access_token,
-                    refresh_token = body.refresh_token;
+                var access_token = body.access_token;
+                var refresh_token = body.refresh_token;
+
+                console.log("login route access token: " + access_token);
 
                 // var user = User(access_token, refresh_token);
 
@@ -102,7 +111,8 @@ router.get('/callback', function(req, res) {
                 // we can also pass the token to the browser to make requests from there
                 // res.redirect('/home');
             } else {
-                res.redirect('/#' +
+                console.log("error getting access token");
+                res.redirect('/home?' +
                     querystring.stringify({
                         error: 'invalid_token'
                     }));
@@ -113,6 +123,8 @@ router.get('/callback', function(req, res) {
 
 router.get('/refresh_token', function(req, res) {
     // requesting access token from refresh token
+    console.log("refreshing token");
+
     var refresh_token = req.query.refresh_token;
     var authOptions = {
         url: 'https://accounts.spotify.com/api/token',
