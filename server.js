@@ -1,14 +1,16 @@
 require('dotenv').config();
 const express = require('express'); // Express web server framework
 		bodyParser = require('body-parser');
-		cors = require('cors');
+		// cors = require('cors');
 		cookieParser = require('cookie-parser');
 		queryString = require('query-string');
 		request = require('request-promise'); // "Request" library
 		base64Img = require('base64-img');
 		fs = require('fs');
 
-var ipAddress = "192.168.2.28";
+const alias = "https://aced-demo.now.sh";
+const ipAddress = "192.168.2.28";
+const port = "8888";
 var app = express();
 
 app.use(express.static(__dirname, { dotfiles: 'allow' } ));
@@ -16,7 +18,7 @@ app.use(express.static(__dirname + '/public'))
    .use(bodyParser.raw({type: "application/octet-stream", limit: '50mb'}))
    .use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
    .use(bodyParser.json())
-   .use(cors())
+   // .use(cors())
    .use(cookieParser());
 
 app.use('/playlist',require('./public/routes/playlist_router.js'));
@@ -58,7 +60,7 @@ app.set("view engine", "enginejs");
 app.set("views", __dirname + "/public/views");
 
 console.log('Listening on 8888');
-app.listen(8888, ipAddress);
+app.listen(port);
 
 
 
