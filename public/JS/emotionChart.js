@@ -258,7 +258,7 @@ function screenshot() {
 			if (loggedTime > numDataPoints){
 				loggingEmotion = false;
 				loggedTime = 0;
-				
+				console.log("calling updatePlaylist()");
 				updatePlaylist();
 			}
 			
