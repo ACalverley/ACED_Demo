@@ -190,8 +190,11 @@ router.get('/createPlaylist', async (req, res) => {
         },
         json: true
     };
+    
+    topTracks = [], topArtists = [], recommendedTracks = [];
 
     rp.get(getTopTracks, (error, response, body) => {
+        console.log(response.statusCode);
         if (!error){
             for (var i = 0; i < body.items.length; i++){
                 topTracks.push(body.items[i].id);
@@ -220,8 +223,8 @@ router.get('/createPlaylist', async (req, res) => {
                     seed_artists: topArtists.toString(),
                     seed_tracks: topTracks.toString(),
                     target_valence: valence,
-                    target_tempo: tempo,
-                    target_energy: energy
+                    target_tempo: 0.9,
+                    target_energy: 0.8
                 },
                 json: true
             };
@@ -249,7 +252,6 @@ router.get('/createPlaylist', async (req, res) => {
                         }));
                 
             });
-
         });
     });
 });

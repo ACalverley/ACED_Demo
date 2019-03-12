@@ -19,6 +19,7 @@ const client_id = process.env.CLIENT_ID; // Your client id
 const client_secret = process.env.CLIENT_SECRET; // Your secret
 const redirect_uri = "http://localhost:8888/login/callback"; // Your redirect uri
 var stateKey = 'spotify_auth_state';
+var refresh_token;
 
 router.use(function timeLog(req, res, next) {
     // console.log('Time: ', Date.now());
@@ -75,8 +76,8 @@ router.get('/callback', function(req, res) {
         request.post(authOptions, function(error, response, body) {
             if (!error && response.statusCode === 200) {
 
-                var access_token = body.access_token,
-                    refresh_token = body.refresh_token;
+                var access_token = body.access_token;
+                refresh_token = body.refresh_token;
 
                 // var user = User(access_token, refresh_token);
 
