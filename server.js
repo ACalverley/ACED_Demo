@@ -54,6 +54,15 @@ app.get('/', (req, res) => {
 	res.redirect('/login');
 });
 
+app.get('/test', (req, res) => {
+	console.log("making post request");
+	
+	request.post('http://192.168.2.28:8888/writeData', {"message" : "hello"}, (err, response, body) => {
+		console.log("worked");
+		res.end();
+	});
+});
+
 app.set("view engine", "enginejs");
 app.set("views", __dirname + "/public/views");
 
