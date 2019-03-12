@@ -7,6 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
+  "now": {
+    "alias": "aced-demo.now.sh"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
