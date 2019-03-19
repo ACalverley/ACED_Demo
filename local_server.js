@@ -32,7 +32,23 @@ app.get('/home', (req, res) => {
 	res.render('index.ejs', {playlist_id: req.query.playlist_id, user_id: req.query.user_id});
 });
 
-app.get("/data", (req, res) => {
+app.post('/writeData', (req, res) => {
+    console.log("writing user data");
+
+    console.log(req.body);
+    
+    // fs.writeFile("./data/UserTrial" + trialNumber + ".txt", JSON.stringify(req.body.userData), (err, data) => {
+    //     if (err) console.log(err);
+    //     else {
+    //         console.log("wrote user trial #" + trialNumber + " to database");
+    //         trialNumber += 1;
+    //     }
+    // });
+
+    res.send("its working!");
+});
+
+app.get("/readData", (req, res) => {
 	dirname = './data';
 	allData = [];
 	fs.readdir(dirname, function(err, filenames) {
@@ -60,7 +76,7 @@ app.set("view engine", "enginejs");
 app.set("views", __dirname + "/public/views");
 
 console.log('Listening on 8888');
-app.listen(port);
+app.listen(port, ipAddress);
 
 
 

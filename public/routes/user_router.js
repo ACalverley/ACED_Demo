@@ -1,18 +1,21 @@
 // jshint ignore: start
 require('dotenv').config();
-const express = require('express');
-    fs = require('fs');
-    router = express.Router();
-    rp = require('request-promise'); // "Request" library
-    cors = require('cors');
-    querystring = require('querystring');
+const express = require('express'),
+    fs = require('fs'),
+    router = express.Router(),
+    rp = require('request-promise'), // "Request" library
+    // cors = require('cors'),
+    querystring = require('querystring'),
     cookieParser = require('cookie-parser');
+
 
 const client_id = process.env.CLIENT_ID; // Your client id 
 const client_secret = process.env.CLIENT_SECRET; // Your secret
 
+var topTracks = [], topArtists = [];
+
 var ABTest = 1;
-var trialNumber = 2;
+var trialNumber = 1;
 
 var sessionData = {};
 var userData = [];
@@ -20,8 +23,9 @@ var userData = [];
 var valence = 0.4;
 var tempo = 90;
 var energy = 0.6;
-var access_token, refresh_token, user_id;
-var topTracks = [], topArtists = [];
+// var access_token, refresh_token, user_id;
+var refresh_token;
+var user_id;
 
 router.use(function timeLog(req, res, next) {
     // console.log('Time: ', Date.now());
@@ -31,15 +35,17 @@ router.use(function timeLog(req, res, next) {
 //////////////////////////////////// ROUTES //////////////////////////////////////////////////////
 router.get('/endDemo', (req, res) => {
     console.log("demo ended");
-    
-    fs.writeFile("./data/UserTrial" + trialNumber + ".txt", JSON.stringify(userData), (err, data) => {
-        if (err) console.log(err)
-        else {
-            console.log("wrote user trial #" + trialNumber + " to database");
-            trialNumber += 1;
-        }
-    })
 
+    // var writeData = {
+    //     url: 'http://192.168.2.28:8888/writeData',
+    //     body: JSON.parse(userData,
+    //     json: true
+    // };
+
+    rp.post('http://192.168.2.28:8888/writeData', {"body": "hello"}, (err, response, body) => {
+        console.log(response);
+        res.end();
+    });
 });
 
 router.post('/logUserResponse', (req, res) => {
@@ -114,12 +120,12 @@ router.get('/updatePlaylist', async (req, res) => {
 
     rp.post(authOptions, function(error, response, body) {
         if (!error && response.statusCode === 200) {
-            access_token = body.access_token;
+            // access_token = body.access_token;
 
             var getRecommendation = {
                 url: 'https://api.spotify.com/v1/recommendations',
                 headers: {
-                  'Authorization': 'Bearer ' + access_token
+                  'Authorization': 'Bearer ' + body.access_token
                 },
                 qs: {
                     limit: 25,
@@ -145,14 +151,14 @@ router.get('/updatePlaylist', async (req, res) => {
                     }
                 }
                 else {
-                    console.log("Failed to get updated recommendations");
+                    console.log("Failed to get updated recommendations, got status code: " + response.statusCode);
                 }
 
                 console.log("");
             
                 res.redirect('/playlist/update?' +
                         querystring.stringify({
-                            access_token: access_token,
+                            access_token: body.access_token,
                             user_id: user_id,
                             tracks: recommendedTracks
                         }));
@@ -165,14 +171,16 @@ router.get('/updatePlaylist', async (req, res) => {
 // called when /user endpoint is hit
 // get users saved albums and look at what genres they like
 router.get('/createPlaylist', async (req, res) => {
+    // var access_token = req.query.access_token;
     user_id = req.query.user_id;
-    access_token = req.query.access_token;
     refresh_token = req.query.refresh_token;
+
+    console.log("user route access token: " + req.query.access_token);
 
     var getTopTracks = {
         url: 'https://api.spotify.com/v1/me/top/tracks',
         headers: {
-          'Authorization': 'Bearer ' + access_token
+          'Authorization': 'Bearer ' + req.query.access_token
         },
         qs: {
             limit: '3'
@@ -183,7 +191,7 @@ router.get('/createPlaylist', async (req, res) => {
     var getTopArtists = {
         url: 'https://api.spotify.com/v1/me/top/artists',
         headers: {
-          'Authorization': 'Bearer ' + access_token
+          'Authorization': 'Bearer ' + req.query.access_token
         },
         qs: {
             limit: '2'
@@ -191,7 +199,11 @@ router.get('/createPlaylist', async (req, res) => {
         json: true
     };
 
+    topTracks = [];
+    topArtists = [];
+
     rp.get(getTopTracks, (error, response, body) => {
+        console.log("getting top tracks! status code: " + response.statusCode);
         if (!error){
             for (var i = 0; i < body.items.length; i++){
                 topTracks.push(body.items[i].id);
@@ -213,11 +225,11 @@ router.get('/createPlaylist', async (req, res) => {
             var getRecommendation = {
                 url: 'https://api.spotify.com/v1/recommendations',
                 headers: {
-                  'Authorization': 'Bearer ' + access_token
+                  'Authorization': 'Bearer ' + req.query.access_token
                 },
                 qs: {
                     limit: 25,
-                    seed_artists: topArtists.toString(),
+                    seed_tracksrtists: topArtists.toString(),
                     seed_tracks: topTracks.toString(),
                     target_valence: valence,
                     target_tempo: tempo,
@@ -226,7 +238,7 @@ router.get('/createPlaylist', async (req, res) => {
                 json: true
             };
 
-            rp.get(getRecommendation, (req, response) => {
+            rp.get(getRecommendation, (request, response) => {
                 var recommendedTracks = [];
                 console.log("getting recommendations");
                 
@@ -234,20 +246,23 @@ router.get('/createPlaylist', async (req, res) => {
                     // console.log(response);
                     console.log("Got recommendations!");
 
-                    for (var i = 0; i < response.body.tracks.length; i++) {
-                        recommendedTracks.push(response.body.tracks[i].uri);
-                        // console.log(response.body.tracks[i].name);
-                    }
-                }
-                else console.log("Didn't get recommendations!");
-                    
-                res.redirect('/playlist/create?' +
+                    // (var i = 0; i < response.body.tracks.length; i++) {
+                    //     recommendedTracks.push(response.body.tracks[i].uri);
+                    //     // console.log(response.body.tracks[i].name);
+                    // }
+
+                    response.body.tracks.forEach((track) => {
+                        recommendedTracks.push(track.uri);
+                    });
+
+                    res.redirect('/playlist/create?' +
                         querystring.stringify({
-                            access_token: access_token,
+                            access_token: req.query.access_token,
                             user_id: user_id,
                             tracks: recommendedTracks
                         }));
-                
+                }
+                else console.log("Didn't get recommendations!");
             });
 
         });

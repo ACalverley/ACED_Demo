@@ -1,1 +1,0 @@
-[{"totals":{"emotion":{"anger":"0.2","disgust":"0","happiness":"0.5","neutral":"0","sadness":"0","surprise":"0"}},"userResponse":{"happiness":"4","neutral":"2","sadness":"9"},"valence":0.5},{"totals":{"emotion":{"anger":"0.2","disgust":"0","happiness":"0.5","neutral":"0","sadness":"0","surprise":"0"}},"userResponse":{"happiness":"2","neutral":"1","sadness":"7"},"valence":0.6}]

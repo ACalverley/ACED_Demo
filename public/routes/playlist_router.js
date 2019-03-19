@@ -7,7 +7,7 @@ require('dotenv').config();
 const express = require('express'),
     router = express.Router(),
     rp = require('request-promise'), // "Request" library
-    cors = require('cors'),
+    // cors = require('cors'),
     querystring = require('querystring'),
     cookieParser = require('cookie-parser');
 
@@ -16,22 +16,6 @@ var playlistID, userID;
 router.use(function timeLog(req, res, next) {
     //   console.log('Time: ', Date.now());
     next();
-});
-
-router.get('/play', (req, res) => {
-    var playPlaylist = {
-        url: 'https://api.spotify.com/v1/me/player/play',
-        headers: {
-            'Authorization': 'Bearer ' + req.query.access_token,
-            'Content-Type': 'application/json'
-        },
-        body : {
-            'context_uri': 'spotify:playlist:' + playlistID
-        },
-        json: true
-    };
-
-    rp.put(playPlaylist);
 });
 
 router.get('/update', (req, res) => {
@@ -121,5 +105,20 @@ router.get('/create', (req, res) => {
 
 });
 
+router.get('/play', (req, res) => {
+    var playPlaylist = {
+        url: 'https://api.spotify.com/v1/me/player/play',
+        headers: {
+            'Authorization': 'Bearer ' + req.query.access_token,
+            'Content-Type': 'application/json'
+        },
+        body : {
+            'context_uri': 'spotify:playlist:' + playlistID
+        },
+        json: true
+    };
+
+    rp.put(playPlaylist);
+});
 
 module.exports = router;
