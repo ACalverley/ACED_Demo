@@ -55,10 +55,11 @@ app.get('/', (req, res) => {
 });
 
 app.get('/test', (req, res) => {
-	console.log("making post request");
+	console.log("making get request");
 	
-	request.post('http://192.168.2.28:8888/writeData', {"message" : "hello"}, (err, response, body) => {
+	request.get('http://192.168.2.28:8888/writeData', (err, response, body) => {
 		console.log("worked");
+		console.log(body);
 		res.end();
 	});
 });
