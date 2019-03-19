@@ -9,7 +9,10 @@ const express = require('express'); // Express web server framework
 		fs = require('fs');
 
 const alias = "https://aced-demo.now.sh";
-const ipAddress = "192.168.2.28";
+// Liam's computer
+const ipAddress = "192.168.2.28:8001";
+// Aidan's computer
+// const ipAddress = "10.217.61.29:8001";
 const port = "8888";
 var app = express();
 
@@ -30,6 +33,13 @@ app.use('/login', require('./public/routes/login_router.js'));
 app.get('/home', (req, res) => {
 	// console.log(req.query);
 	res.render('index.ejs', {playlist_id: req.query.playlist_id, user_id: req.query.user_id});
+});
+
+app.get('/test', (req, res) => {
+	app.get('http://' + ipAddress + '/test', (err, res, body) => {
+		console.log(body);
+		console.log("got response from local server");
+	});
 });
 
 app.get("/data", (req, res) => {
