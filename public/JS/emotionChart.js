@@ -177,98 +177,101 @@ function endDemo() {
 function screenshot() {
 	takeASnap()
 	.then(imgData => {
-		$.post({
-			url: "https://canadacentral.api.cognitive.microsoft.com/face/v1.0/detect?&returnFaceAttributes=emotion",
-			contentType: "application/octet-stream",
-			headers: {
-				'Ocp-Apim-Subscription-Key': apiKey[flag]
-			},
-			processData: false, 
-			data: imgData
-		}, function(data, status) {
-			// console.log(status);
-			if (flag == 0){
-				flag = 1;
-			} else flag = 0;
+		// counters
+		dataPoints += 1;
+		
+		if (loggingEmotion) {
+			$.post({
+				url: "https://canadacentral.api.cognitive.microsoft.com/face/v1.0/detect?&returnFaceAttributes=emotion",
+				contentType: "application/octet-stream",
+				headers: {
+					'Ocp-Apim-Subscription-Key': apiKey[flag]
+				},
+				processData: false, 
+				data: imgData
+			}, function(data, status) {
+				console.log(status);
+				if (flag == 0){
+					flag = 1;
+				} else flag = 0;
 
-			if (data.length > 0){
-				emotions = data[0].faceAttributes.emotion;
+				console.log(data);
 
-				emotionLog.push(emotion);
-				
-				// resizeEmoji(emotions);
+				if (data.length > 0){
+					emotions = data[0].faceAttributes.emotion;
 
-				if (dataPoints > 9) { 
-					config.data.datasets.forEach(function(dataset) {
-						dataset.data.shift();
+					emotionLog.push(emotions);
+					
+					// resizeEmoji(emotions);
+
+					if (dataPoints > 9) { 
+						config.data.datasets.forEach(function(dataset) {
+							dataset.data.shift();
+						});
+					}
+					
+					config.data.datasets[0].data.push({
+						x: dataPoints,
+						y: parseFloat(emotions.happiness)
 					});
+					totals.emotion.happiness += emotions.happiness;
+
+					// config.data.datasets[1].data.push({
+					// 	x: timestamp,
+					// 	y: parseFloat(emotions.contempt) * 100
+					// });
+
+					config.data.datasets[1].data.push({
+						x: dataPoints,
+						y: parseFloat(emotions.sadness)
+					});
+					totals.emotion.sadness += emotions.sadness;
+
+					// config.data.datasets[3].data.push({
+					// 	x: timestamp,
+					// 	y: parseFloat(emotions.fear) * 100
+					// });
+
+					config.data.datasets[2].data.push({
+						x: dataPoints,
+						y: parseFloat(emotions.neutral)
+					});
+					totals.emotion.neutral += emotions.neutral;
+
+					config.data.datasets[3].data.push({
+						x: dataPoints,
+						y: parseFloat(emotions.anger) 
+					});
+					totals.emotion.anger += emotions.anger;
+
+					config.data.datasets[4].data.push({
+						x: dataPoints,
+						y: parseFloat(emotions.disgust)
+					});
+					totals.emotion.disgust += emotions.disgust;
+
+					config.data.datasets[5].data.push({
+						x: dataPoints,
+						y: parseFloat(emotions.surprise)
+					});
+					totals.emotion.surprise += emotions.surprise;
+
+
+					if (config.data.datasets[0].data.length == 10 || dataPoints < 10){
+						window.myLine.update();
+					}
 				}
-				
-				config.data.datasets[0].data.push({
-					x: dataPoints,
-					y: parseFloat(emotions.happiness)
-				});
-				totals.emotion.happiness += emotions.happiness;
-
-				// config.data.datasets[1].data.push({
-				// 	x: timestamp,
-				// 	y: parseFloat(emotions.contempt) * 100
-				// });
-
-				config.data.datasets[1].data.push({
-					x: dataPoints,
-					y: parseFloat(emotions.sadness)
-				});
-				totals.emotion.sadness += emotions.sadness;
-
-				// config.data.datasets[3].data.push({
-				// 	x: timestamp,
-				// 	y: parseFloat(emotions.fear) * 100
-				// });
-
-				config.data.datasets[2].data.push({
-					x: dataPoints,
-					y: parseFloat(emotions.neutral)
-				});
-				totals.emotion.neutral += emotions.neutral;
-
-				config.data.datasets[3].data.push({
-					x: dataPoints,
-					y: parseFloat(emotions.anger) 
-				});
-				totals.emotion.anger += emotions.anger;
-
-				config.data.datasets[4].data.push({
-					x: dataPoints,
-					y: parseFloat(emotions.disgust)
-				});
-				totals.emotion.disgust += emotions.disgust;
-
-				config.data.datasets[5].data.push({
-					x: dataPoints,
-					y: parseFloat(emotions.surprise)
-				});
-				totals.emotion.surprise += emotions.surprise;
-
-
-				if (config.data.datasets[0].data.length == 10 || dataPoints < 10){
-					window.myLine.update();
+				// update Spotify playlist every 15 minutes
+				if (loggedTime > numDataPoints){
+					loggingEmotion = false;
+					loggedTime = 0;
+					console.log("calling updatePlaylist()");
+					updatePlaylist();
 				}
-			}
-			// update Spotify playlist every 15 minutes
-			if (loggedTime > numDataPoints){
-				loggingEmotion = false;
-				loggedTime = 0;
-				console.log("calling updatePlaylist()");
-				updatePlaylist();
-			}
-			
-			// counters
-			dataPoints += 1;
-			if (loggingEmotion) {
-				loggedTime += 1;
-			} 
-		});
+			});
+
+			loggedTime += 1;
+		} 
 	});
 }
 
