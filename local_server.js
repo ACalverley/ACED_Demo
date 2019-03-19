@@ -9,8 +9,9 @@ const express = require('express'); // Express web server framework
 		fs = require('fs');
 
 const alias = "https://aced-demo.now.sh";
-const ipAddress = "192.168.2.28";
-const port = "8888";
+// const ipAddress = "192.168.2.28";
+const ipAddress = "0.0.0.0";
+const port = "8001";
 var app = express();
 
 app.use(express.static(__dirname, { dotfiles: 'allow' } ));
@@ -21,16 +22,18 @@ app.use(express.static(__dirname + '/public'))
    // .use(cors())
    .use(cookieParser());
 
-app.use('/playlist',require('./public/routes/playlist_router.js'));
+// app.use('/playlist',require('./public/routes/playlist_router.js'));
 
-app.use('/user', require('./public/routes/user_router.js'));
+// app.use('/user', require('./public/routes/user_router.js'));
 
-app.use('/login', require('./public/routes/login_router.js'));
+// app.use('/login', require('./public/routes/login_router.js'));
 
-app.get('/home', (req, res) => {
-	// console.log(req.query);
-	res.render('index.ejs', {playlist_id: req.query.playlist_id, user_id: req.query.user_id});
-});
+// app.get('/home', (req, res) => {
+// 	// console.log(req.query);
+// 	res.render('index.ejs', {playlist_id: req.query.playlist_id, user_id: req.query.user_id});
+// });
+
+app.get('/test')
 
 app.post('/writeData', (req, res) => {
     console.log("writing user data");
@@ -68,14 +71,14 @@ app.get("/readData", (req, res) => {
   	});
 });
 
-app.get('/', (req, res) => {
-	res.redirect('/login');
-});
+// app.get('/', (req, res) => {
+// 	res.redirect('/login');
+// });
 
 app.set("view engine", "enginejs");
 app.set("views", __dirname + "/public/views");
 
-console.log('Listening on 8888');
+console.log('Listening on 8001');
 app.listen(port, ipAddress);
 
 
