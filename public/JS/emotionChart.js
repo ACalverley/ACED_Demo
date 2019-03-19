@@ -2,7 +2,8 @@ var dataPoints = 0;
 var loggingEmotion = false;
 var loggedTime = 0;
 var flag = 0;
-var apiKey = ['7453875244d44303b8f460f4597d8f29', 'e91caa7877034a3bba07ca16af7003f9'];
+// var apiKey = ['7453875244d44303b8f460f4597d8f29', 'e91caa7877034a3bba07ca16af7003f9'];
+var apiKey = ['1dcd07f7e3504e05b35d1639d3baf749', '1dcd07f7e3504e05b35d1639d3baf749'];
 var deltaValence = 0, deltaTempo = 0, deltaEnergy = 0;
 var totals = { emotion: {
 			                "anger": 0.2,
