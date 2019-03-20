@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express'); // Express web server framework
 		bodyParser = require('body-parser');
+		http = require('http');
 		// cors = require('cors');
 		cookieParser = require('cookie-parser');
 		queryString = require('query-string');
@@ -10,7 +11,8 @@ const express = require('express'); // Express web server framework
 
 const alias = "https://aced-demo.now.sh";
 // Liam's computer
-const ipAddress = "192.168.2.28:8001";
+const ipAddress = "192.168.2.28";
+const localServerPort = "8001";
 // Aidan's computer
 // const ipAddress = "10.217.61.29:8001";
 const port = "8888";
@@ -36,10 +38,30 @@ app.get('/home', (req, res) => {
 });
 
 app.get('/test', (req, res) => {
-	app.get('http://' + ipAddress + '/test', (err, res, body) => {
-		console.log(body);
-		console.log("got response from local server");
-	});
+	// request.get('http://' + ipAddress + '/test', (err, res, body) => {
+	// 	console.log(body);
+	// 	console.log("got response from local server");
+	// 	res.end();
+	// });
+
+	var options = {
+	    host: ipAddress,
+	    port: localServerPort,
+	    path: "/test",
+	    method: "GET", 
+    };
+
+    var dataReq = http.request(options, (res) => {
+		res.on("data", (data)=> {
+			console.log("got a response from local server!");
+		});
+		res.on("end", () => {
+			console.log("data was saved!");
+		});
+    });
+
+    dataReq.write();
+    dataReq.end();
 });
 
 app.get("/data", (req, res) => {
