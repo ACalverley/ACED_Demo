@@ -5,9 +5,10 @@ const express = require('express'); // Express web server framework
 		// cors = require('cors');
 		cookieParser = require('cookie-parser');
 		queryString = require('query-string');
-		request = require('request-promise'); // "Request" library
+		// request = require('request-promise'); // "Request" library
 		base64Img = require('base64-img');
 		fs = require('fs');
+		request = require('request');
 
 const alias = "https://aced-demo.now.sh";
 // Liam's computer
@@ -44,24 +45,35 @@ app.get('/test', (req, res) => {
 	// 	res.end();
 	// });
 
-	var options = {
-	    host: ipAddress,
-	    port: localServerPort,
-	    path: "/test",
-	    method: "GET", 
-    };
+	// var options = {
+	//     host: ipAddress,
+	//     port: localServerPort,
+	//     path: "/test",
+	//     method: "GET", 
+ //    };
 
-    var dataReq = http.request(options, (res) => {
-		res.on("data", (data)=> {
-			console.log("got a response from local server!");
-		});
-		res.on("end", () => {
-			console.log("data was saved!");
-		});
-    });
+ //    var dataReq = http.request(options, (res) => {
+	// 	res.on("data", (data)=> {
+	// 		console.log("got a response from local server!");
+	// 	});
+	// 	res.on("end", () => {
+	// 		console.log("data was saved!");
+	// 	});
+ //    });
 
-    dataReq.write();
-    dataReq.end();
+ //    dataReq.write("test");
+ //    dataReq.end();
+ //    res.end();
+	request.post(
+ 		"http://" + ipAddress + ":" + localServerPort + "/test",
+ 		{ json: {data : "hey here is some data"}},
+ 		(req, response) => {
+			if (response.statusCode == 200){
+				console.log(response.body);
+			}
+ 	});
+
+ 	res.end();
 });
 
 app.get("/data", (req, res) => {
