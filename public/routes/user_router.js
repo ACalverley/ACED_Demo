@@ -1,27 +1,29 @@
 // jshint ignore: start
 require('dotenv').config();
 const express = require('express');
-    fs = require('fs');
+    // fs = require('fs');
     router = express.Router();
     rp = require('request-promise'); // "Request" library
     cors = require('cors');
     querystring = require('querystring');
     cookieParser = require('cookie-parser');
+    request = require('request');
 
 const client_id = process.env.CLIENT_ID; // Your client id 
 const client_secret = process.env.CLIENT_SECRET; // Your secret
 
-var ABTest = 1;
-var trialNumber = 2;
+var ipAddress = "192.168.2.28";
+var localServerPort = "8001";
 
 var sessionData = {};
 var userData = [];
+const numDataPoints = 360;
 
-var valence = 0.4;
-var tempo = 90;
+var valence = 0.5;
+var tempo = 100;
 var energy = 0.6;
 var access_token, refresh_token, user_id;
-var topTracks = [], topArtists = [];
+var topTracks = [], topArtists = [], recommendedTracks = [];
 
 router.use(function timeLog(req, res, next) {
     // console.log('Time: ', Date.now());
@@ -31,21 +33,23 @@ router.use(function timeLog(req, res, next) {
 //////////////////////////////////// ROUTES //////////////////////////////////////////////////////
 router.get('/endDemo', (req, res) => {
     console.log("demo ended");
-    
-    fs.writeFile("./data/UserTrial" + trialNumber + ".txt", JSON.stringify(userData), (err, data) => {
-        if (err) console.log(err)
-        else {
-            console.log("wrote user trial #" + trialNumber + " to database");
-            trialNumber += 1;
-        }
-    })
 
+    request.post(
+        "http://" + ipAddress + ":" + localServerPort + "/writeData",
+        { json: { userData : userData }},
+        (req, response) => {
+            if (response.statusCode == 200){
+                console.log(response.body);
+            }
+    });
+
+    res.end();
 });
 
 router.post('/logUserResponse', (req, res) => {
     console.log("logging user response");
     userData[userData.length - 1].userResponse = req.body.userResponse;
-    userData[userData.length - 1].valence = valence;
+    // userData[userData.length - 1].valence = valence;
 
     res.end();
 });
@@ -55,52 +59,38 @@ router.post('/updateParameters', (req, res) => {
 
     sessionData = {};
     
+    sessionData.currentParams = { valence : valence,
+                                  tempo : tempo,
+                                  energy : energy };
     sessionData.totals = req.body.totals;
     sessionData.emotionLog = req.body.emotionLog;
+    sessionData.trackURI = recommendedTracks;
 
     userData.push(sessionData);
 
     console.log(sessionData);
 
-    // var avgHappy = totals.emotion.happiness/5;
-    // var avgNeutral = totals.emotion.neutral/5;
-    // var avgSad = totals.emotion.sadness/5;
-    // var avgAngry = totals.emotion.anger/5;
-    // var avgSurprise = totals.emotion.surprise/5;
-    // var avgDisgust = totals.emotion.disgust/5;
-
     res.redirect('updatePlaylist');
-    // res.end();
 });
 
 router.get('/updatePlaylist', async (req, res) => {
     console.log("updating playlist");
-    valence += 0.1;
-    // totals = body.totals;
-    // user = body.user;
-    // dataPoints = body.dataPoints;
 
-    // console.log(totals.emotion);
-    // console.log(user.emotion);
-    // console.log(dataPoints);
+    if (sessionData.totals.happiness/numDataPoints > 0.10) {
+        tempo += 5;
+    } else if (sessionData.totals.happiness > sessionData.totals.sadness){
+        valence += 0.05;
+        tempo += 5;
+    } else {
+        valence += 0.15;
+        energy += 0.1;
+    }
 
-    
-    // valence = valence + parseInt(req.query.deltaValence);
-    // tempo = tempo + parseInt(req.query.deltaTempo);
-    // energy = energy + parseInt(req.query.deltaEnergy);
-
-    // if (valence > 1) valence = 1;
-    // else if (valence < 0) valence = 0;
-
-    // if (tempo < 1) tempo = 1;
-
-    // if (energy > 1) energy = 1;
-    // else if (energy < 0) energy = 0;
-
-    // console.log("Delta Valence: " + req.query.deltaValence);
-    // console.log("Delta Tempo: " + req.query.deltaTempo);
-    // console.log("Delta Energy: " + req.query.deltaEnergy);
-
+    if (sessionData.totals.neutral/numDataPoints > 0.90) {
+        valence += 0.05;
+        tempo += 10;
+        energy += 0.1;
+    }
 
     var authOptions = {
         url: 'https://accounts.spotify.com/api/token',
@@ -133,7 +123,7 @@ router.get('/updatePlaylist', async (req, res) => {
             };
 
             rp.get(getRecommendation, (req, response) => {
-                var recommendedTracks = [];
+                recommendedTracks = [];
                 
                 if (response.statusCode == 200) {
                     // console.log(response);
@@ -165,6 +155,8 @@ router.get('/updatePlaylist', async (req, res) => {
 // called when /user endpoint is hit
 // get users saved albums and look at what genres they like
 router.get('/createPlaylist', async (req, res) => {
+    userData = [];
+
     user_id = req.query.user_id;
     access_token = req.query.access_token;
     refresh_token = req.query.refresh_token;
@@ -230,7 +222,6 @@ router.get('/createPlaylist', async (req, res) => {
             };
 
             rp.get(getRecommendation, (req, response) => {
-                var recommendedTracks = [];
                 console.log("getting recommendations");
                 
                 if (response.statusCode == 200) {
@@ -239,8 +230,10 @@ router.get('/createPlaylist', async (req, res) => {
 
                     for (var i = 0; i < response.body.tracks.length; i++) {
                         recommendedTracks.push(response.body.tracks[i].uri);
-                        // console.log(response.body.tracks[i].name);
+                        // console.log(response.body.tracks[i]);
                     }
+
+                    sessionData.trackURI = recommendedTracks;
                 }
                 else console.log("Didn't get recommendations!");
                     

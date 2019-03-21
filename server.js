@@ -7,12 +7,12 @@ const express = require('express'); // Express web server framework
 		// request = require('request-promise'); // "Request" library
 		request = require('request');
 		base64Img = require('base64-img');
-		fs = require('fs');
-		http = require("http");
+		fs = require('fs'); 
+		// http = require("http");
 
 
-var ipAddress = "192.168.2.28";
-var localServerPort = "8001";
+// var ipAddress = "192.168.2.28";
+// var localServerPort = "8001";
 var app = express();
 
 app.use(express.static(__dirname, { dotfiles: 'allow' } ));
@@ -34,81 +34,9 @@ app.get('/home', (req, res) => {
 	res.render('index.ejs', {playlist_id: req.query.playlist_id, user_id: req.query.user_id});
 });
 
-app.get("/data", (req, res) => {
-	dirname = './data';
-	allData = [];
-	fs.readdir(dirname, function(err, filenames) {
-	    if (err) {
-	    	res.send(err);
-	    }
-	    filenames.forEach(function(filename) {
-	    	// console.log(filename);
-	      	content = fs.readFileSync(dirname + "/" + filename);
-	        // console.log(content.toString());
-	        userData = JSON.parse(content.toString());
-	        allData.push(userData);
-	    });
-
-	    console.log("finished reading files");
-	    res.send(allData);
-  	});
-});
-
 app.get('/', (req, res) => {
 	res.redirect('/login');
 });
-
-// app.get('/test', (req, res) => {
-// 	console.log("making get request");
-	
-// 	request.get('http://192.168.2.28:8888/writeData', (err, response, body) => {
-// 		console.log("worked");
-// 		console.log(body);
-// 		res.end();
-// 	});
-// });
-
-app.get('/test', (req, res) => {
-	// request.get('http://' + ipAddress + '/test', (err, res, body) => {
-	// 	console.log(body);
-	// 	console.log("got response from local server");
-	// 	res.end();
-	// });
-
-	// var options = {
-	//     host: ipAddress,
-	//     port: localServerPort,
-	//     path: "/test",
-	//     method: "GET", 
- //    };
-
- //    var dataReq = http.request(options, (res) => {
-	// 	res.on("data", (data)=> {
-	// 		console.log("got a response from local server!");
-	// 		console.log(data.body);
-	// 	});
-	// 	res.on("end", () => {
-	// 		console.log("data was saved!");
-	// 	});
- //    });
-
- //    dataReq.write("test");
- //    dataReq.end();
-
- //    res.end();
-
- 	request.post(
- 		"http://" + ipAddress + ":" + localServerPort + "/test",
- 		{ json: {data : "hey here is some data"}},
- 		(req, response) => {
-			if (response.statusCode == 200){
-				console.log(response.body);
-			}
- 	});
-
- 	res.end();
-});
-
 
 app.set("view engine", "enginejs");
 app.set("views", __dirname + "/public/views");

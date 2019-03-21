@@ -3,17 +3,17 @@ var loggingEmotion = false;
 var loggedTime = 0;
 var flag = 0;
 // var apiKey = ['7453875244d44303b8f460f4597d8f29', 'e91caa7877034a3bba07ca16af7003f9'];
-var apiKey = ['1dcd07f7e3504e05b35d1639d3baf749', '1dcd07f7e3504e05b35d1639d3baf749'];
+var apiKey = ['1dcd07f7e3504e05b35d1639d3baf749', '44887a0b25784feba60e6f6e41d9a944'];
 var deltaValence = 0, deltaTempo = 0, deltaEnergy = 0;
 var totals = { emotion: {
-			                "anger": 0.2,
+			                "anger": 0,
 			                "disgust": 0,
-			                "happiness": 0.5,
+			                "happiness": 0,
 			                "neutral": 0,
 			                "sadness": 0,
 			                "surprise": 0 }
 			          	};
-var numDataPoints = 3;
+var numDataPoints = 360;
 var emotionLog = [];
 
 navigator.mediaDevices.getUserMedia = (navigator.mediaDevices.getUserMedia ||
