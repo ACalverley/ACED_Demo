@@ -112,7 +112,7 @@ router.get('/updatePlaylist', async (req, res) => {
                   'Authorization': 'Bearer ' + access_token
                 },
                 qs: {
-                    limit: 25,
+                    limit: 20,
                     seed_artists: topArtists.toString(),
                     seed_tracks: topTracks.toString(),
                     target_valence: valence,
