@@ -78,7 +78,7 @@ router.post('/updateParameters', (req, res) => {
 router.get('/updatePlaylist', async (req, res) => {
     console.log("updating playlist");
 
-    if (sessionData.totals.happiness/sessionData.dataPoints > 0.10) {
+    if (sessionData.totals.happiness/sessionData.emotionLog.length > 0.10) {
         tempo += 5;
     } else if (sessionData.totals.happiness > sessionData.totals.sadness){
         valence += 0.05;
@@ -88,7 +88,7 @@ router.get('/updatePlaylist', async (req, res) => {
         energy += 0.1;
     }
 
-    if (sessionData.totals.neutral/sessionData.dataPoints > 0.90) {
+    if (sessionData.totals.neutral/sessionData.emotionLog.length > 0.90) {
         valence += 0.05;
         tempo += 10;
         energy += 0.1;
