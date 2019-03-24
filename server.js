@@ -17,9 +17,9 @@ var app = express();
 
 app.use(express.static(__dirname, { dotfiles: 'allow' } ));
 app.use(express.static(__dirname + '/public'))
-   .use(bodyParser.raw({type: "application/octet-stream", limit: '50mb'}))
-   .use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
-   .use(bodyParser.json())
+   // .use(bodyParser.raw({type: "application/octet-stream", limit: '50mb'}))
+   .use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 1000000 }))
+   .use(bodyParser.json({ limit: '50mb', extended: true }))
    .use(cors())
    .use(cookieParser());
 

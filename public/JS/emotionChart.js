@@ -323,8 +323,21 @@ function logUserResponse() {
 }
 
 function updatePlaylist() {
+
+	// emotionLog = [];
+	// for (var i = 0; i < 360; i++){
+	// 	emotionLog.push({ anger: '0',
+	// 				       contempt: '0',
+	// 				       disgust: '0',
+	// 				       fear: '0',
+	// 				       happiness: '0',
+	// 				       neutral: '0.993',
+	// 				       sadness: '0.007',
+	// 				       surprise: '0' });
+	// }
+
 	$.post('http://localhost:8888/user/updateParameters', 
-		{	totals: totals,
+		{	totals: totals.emotion,
 			emotionLog: emotionLog,
 			dataPoints: numDataPoints }, 
 		function(data, status) {
@@ -335,6 +348,17 @@ function updatePlaylist() {
 			  {
 			    location.reload();
 			  }, 15000);
+			
+			// uncessary due to page reload
+			// totals = { emotion: {
+			//                 "anger": 0,
+			//                 "disgust": 0,
+			//                 "happiness": 0,
+			//                 "neutral": 0,
+			//                 "sadness": 0,
+			//                 "surprise": 0 }
+			//           	};
+			// emotionLog = [];
 		} else {
 			console.log(status);
 			console.log("error updating playlist");

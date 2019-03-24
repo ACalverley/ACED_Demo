@@ -12,12 +12,12 @@ const express = require('express');
 const client_id = process.env.CLIENT_ID; // Your client id 
 const client_secret = process.env.CLIENT_SECRET; // Your secret
 
-var ipAddress = "192.168.2.28";
+var ipAddress = "10.217.114.118";
+// var ipAddress = "192.168.2.28";
 var localServerPort = "8001";
 
 var sessionData = {};
 var userData = [];
-const numDataPoints = 360;
 
 var valence = 0.5;
 var tempo = 100;
@@ -56,6 +56,7 @@ router.post('/logUserResponse', (req, res) => {
 
 router.post('/updateParameters', (req, res) => {
     console.log("updating parameters and logging emotions");
+    // console.log(req.body);
 
     sessionData = {};
     
@@ -64,6 +65,7 @@ router.post('/updateParameters', (req, res) => {
                                   energy : energy };
     sessionData.totals = req.body.totals;
     sessionData.emotionLog = req.body.emotionLog;
+    sessionData.dataPoints = req.body.dataPoints;
     sessionData.trackURI = recommendedTracks;
 
     userData.push(sessionData);
@@ -76,7 +78,7 @@ router.post('/updateParameters', (req, res) => {
 router.get('/updatePlaylist', async (req, res) => {
     console.log("updating playlist");
 
-    if (sessionData.totals.happiness/numDataPoints > 0.10) {
+    if (sessionData.totals.happiness/sessionData.dataPoints > 0.10) {
         tempo += 5;
     } else if (sessionData.totals.happiness > sessionData.totals.sadness){
         valence += 0.05;
@@ -86,7 +88,7 @@ router.get('/updatePlaylist', async (req, res) => {
         energy += 0.1;
     }
 
-    if (sessionData.totals.neutral/numDataPoints > 0.90) {
+    if (sessionData.totals.neutral/sessionData.dataPoints > 0.90) {
         valence += 0.05;
         tempo += 10;
         energy += 0.1;
