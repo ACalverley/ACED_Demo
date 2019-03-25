@@ -12,8 +12,8 @@ const express = require('express');
 const client_id = process.env.CLIENT_ID; // Your client id 
 const client_secret = process.env.CLIENT_SECRET; // Your secret
 
-var ipAddress = "10.217.114.118";
-// var ipAddress = "192.168.2.28";
+// var ipAddress = "10.217.114.118";
+var ipAddress = "192.168.2.28";
 var localServerPort = "8001";
 
 var sessionData = {};
