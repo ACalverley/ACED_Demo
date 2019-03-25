@@ -9,15 +9,15 @@
 	<link href="CSS/style.css" rel="stylesheet">
 	<!-- <link href="CSS/style2.css" rel="stylesheet"> -->
 </head>
-
-<body onunload="endDemo()" style="overflow: scroll;">
+<!-- onunload="endDemo()" -->
+<body style="overflow: scroll;">
 	<div class="container">
 		<h1 class="title centered">ACED Solutions</h1>
 		<h5 class="title centered">Feel the music.</h5>
 		<div class="row">
 			<div class="col" id="media-player">
 				<iframe id="spotifyPlayer" src="https://open.spotify.com/embed/user/<%= user_id %>/playlist/<%= playlist_id %>" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-				<!-- <button class="btn btn-primary" style="margin-top: 60px; margin-bottom: 6px;" onclick="endDemo();">End Demo</button> -->
+				<button class="btn btn-primary" style="margin-top: 60px; margin-bottom: 6px;" onclick="endDemo();">End Demo</button>
 				<p id="thankyou" class="title">Thank you for your participation!</p>
 			</div>
 			<div class="col col-centred">
