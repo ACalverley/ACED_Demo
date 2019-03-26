@@ -13,7 +13,7 @@ var totals = { emotion: {
 			                "sadness": 0,
 			                "surprise": 0 }
 			          	};
-var numDataPoints = 5;
+var numDataPoints = 360;
 var emotionLog = [];
 
 navigator.mediaDevices.getUserMedia = (navigator.mediaDevices.getUserMedia ||
