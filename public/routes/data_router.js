@@ -29,8 +29,9 @@ router.get('/process', async (req, res) => {
             if (err) console.log(err);
             else {
                 console.log("reading file");
+                // this right here is all the text file data!
                 sessions = JSON.parse(rawData);
-                console.log(sessions.length);
+                // console.log(sessions.length);
                 
                 for (var k = 0; k < sessions.length; k++){
                     for (var j = 0; j < sessions[k].trackURI.length; j++){
