@@ -1,7 +1,7 @@
 // jshint ignore: start
 require('dotenv').config();
 const express = require('express');
-    // fs = require('fs');
+    fs = require('fs');
     router = express.Router();
     rp = require('request-promise'); // "Request" library
     cors = require('cors');
@@ -34,13 +34,21 @@ router.use(function timeLog(req, res, next) {
 router.get('/endDemo', (req, res) => {
     console.log("demo ended");
 
-    request.post(
-        "http://" + ipAddress + ":" + localServerPort + "/writeData",
-        { json: { userData : userData }},
-        (req, response) => {
-            if (response.statusCode == 200){
-                console.log(response.body);
-            }
+    // request.post(
+    //     "http://" + ipAddress + ":" + localServerPort + "/writeData",
+    //     { json: { userData : userData }},
+    //     (req, response) => {
+    //         if (response.statusCode == 200){
+    //             console.log(response.body);
+    //         }
+    // });
+
+    const directory = './data';
+
+    var trialNumber = fs.readdirSync(directory).length + 1;
+    fs.writeFile("./data/UserTrial" + trialNumber + ".txt", JSON.stringify(userData), (err, data) => {
+        if (err) console.log(err);
+        else console.log("wrote user trial #" + trialNumber + " to database");
     });
 
     res.end();
