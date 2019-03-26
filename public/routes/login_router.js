@@ -92,12 +92,21 @@ router.get('/callback', function(req, res) {
                     var user_id = body.id;
                     // console.log("redirecting to createPlaylist route");
 
-                    res.redirect('/user/createPlaylist?' +
+                    // res.redirect('/user/createPlaylist?' +
+                    //     querystring.stringify({
+                    //         access_token: access_token,
+                    //         refresh_token: refresh_token,
+                    //         user_id: user_id
+                    //     })
+                    // );
+
+                    res.redirect('/data/process?' +
                         querystring.stringify({
                             access_token: access_token,
                             refresh_token: refresh_token,
                             user_id: user_id
-                        }));
+                        })
+                    );
                 });
 
                 // we can also pass the token to the browser to make requests from there
