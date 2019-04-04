@@ -47,20 +47,22 @@ function combineData(sessions, access_token) {
 }
 
 router.get('/process', async (req, res) => {
-    var access_token = req.query.access_token;
 
-	const directory = './data';
+    results = await getUserResponse();
+ //    var access_token = req.query.access_token;
 
-    fs.readdirAsync(directory).then((files) => {
-        return Promise.all(files.map(fs.readFileAsync));
-    }).then((fileData) => {
-        return Promise.all(fileData.map((sessions) => combineData(JSON.parse(sessions), access_token)));
-    }).then((allData) => {
-        fs.writeFile("./newData/testData_maxScore" + ".txt", JSON.stringify(allData), (err, data) => {
-            if (err) console.log(err);
-            else console.log("wrote to database");
-        }); 
-    });
+	// const directory = './data';
+
+ //    fs.readdirAsync(directory).then((files) => {
+ //        return Promise.all(files.map(fs.readFileAsync));
+ //    }).then((fileData) => {
+ //        return Promise.all(fileData.map((sessions) => combineData(JSON.parse(sessions), access_token)));
+ //    }).then((allData) => {
+ //        fs.writeFile("./newData/testData_maxScore" + ".txt", JSON.stringify(allData), (err, data) => {
+ //            if (err) console.log(err);
+ //            else console.log("wrote to database");
+ //        }); 
+ //    });
 
     res.end();
 });
