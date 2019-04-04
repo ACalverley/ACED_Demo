@@ -225,8 +225,8 @@ router.get('/createPlaylist', async (req, res) => {
                     seed_artists: topArtists.toString(),
                     seed_tracks: topTracks.toString(),
                     target_valence: valence,
-                    target_tempo: 0.9,
-                    target_energy: 0.8
+                    target_tempo: tempo,
+                    target_energy: energy
                 },
                 json: true
             };
